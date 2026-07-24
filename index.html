@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Type play</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TYPE PLAY STUDIO | 专业艺术处理工具 PRO</title>
+    <style>
+        :root {
+            --sidebar-bg: #ffffff;
+            /* 核心修改：将画布区域的背景色改为黑色 */
+            --canvas-area-bg: #000000;
+            --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body { 
+            background: #f0f0f0; color: #333; 
+            font-family: var(--font-main); 
+            margin: 0; padding: 0; display: flex; width: 100vw; height: 100vh; overflow: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .sidebar {
+            width: 360px; height: 100vh; 
+            background: var(--sidebar-bg); color: #1a1a1a;
+            display: flex; flex-direction: column; padding: 0; box-sizing: border-box;
+            border-right: 1px solid #e0e0e0; z-index: 10; flex-shrink: 0;
+            box-shadow: none !important; 
+        }
+
+        .sidebar-content {
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;
+            padding: 35px 45px;
+        }
+        .sidebar-content::-webkit-scrollbar { width: 4px; }
+        .sidebar-content::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+        .header h1 { font-size: 1.1rem; margin: 0 0 5px 0; color: #000; letter-spacing: 2px; font-weight: 800; text-transform: uppercase; }
+
+        .ctrl { display: flex; flex-direction: column; gap: 8px; } 
+        .ctrl label { 
+            font-size: 0.72rem; color: #1a1a1a; display: flex; justify-content: space-between;
+            align-items: flex-end; font-weight: 600; text-transform: uppercase;
+        }
+        .ctrl label span.val-display { font-size: 0.8rem; color: #888; font-weight: 400; }
+        .ctrl label span.sub-label { font-weight: 400; color: #bbb; font-size: 0.55rem; margin-left: 5px; flex-grow: 1; }
+
+        .section-parameters { margin-top: 25px; }
+        .section-colors { margin-top: 25px; }
+        .section-export { margin-top: 25px; }
+
+        .style-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
+        .style-btn {
+            padding: 8px; font-size: 0.65rem; border: 1px solid #eee; background: #f5f5f5;
+            cursor: pointer; font-weight: 600; text-transform: uppercase; text-align: center;
+        }
+        .style-btn.active { background: #000; color: #fff; border-color: #000; }
+
+        .file-input-wrapper {
+            position: relative; display: flex; align-items: center; background: #000; margin-bottom: 10px;
+        }
+        .file-input-container {
+            padding: 13px; font-size: 0.7rem; flex: 1; cursor: pointer; color: #fff;
+            text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .btn-clear { position: absolute; right: 12px; color: #888; cursor: pointer; font-size: 14px; display: none; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 2px; background: #e5e5e5; outline: none; margin: 10px 0; }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 10px; height: 10px; background: #000; cursor: pointer; border-radius: 50%;
+        }
+
+        .color-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 5px; }
+        .color-unit { display: flex; flex-direction: column; gap: 4px; }
+        .color-unit label { font-size: 0.62rem; color: #aaa; }
+        input[type="color"] { width: 100%; height: 26px; border: 1px solid #eee; background: none; cursor: pointer; padding: 0; }
+
+        .btn-toggle-paper {
+            margin-top: 8px; padding: 10px; font-size: 0.65rem; border: 1px solid #000; 
+            background: #fff; color: #000; cursor: pointer; font-weight: 700; text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .btn-toggle-paper.active { background: #000; color: #fff; }
+
+        .export-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        button.action-btn {
+            padding: 10px; font-size: 0.65rem; border: 1px solid #eee; background: #fff;
+            cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+        }
+        button.action-btn.primary { background: #000; color: #fff; border-color: #000; }
+        button.action-btn.secondary { background: #e0e0e0; color: #333; border: none; }
+
+        .footer-text { 
+            padding: 25px 0; text-align: center; font-size: 9px; color: #bbb; 
+            letter-spacing: 1px; background: #ffffff; border-top: 1px solid #f5f5f5;
+        }
+
+        .canvas-area { 
+            flex: 1; background: var(--canvas-area-bg); display: flex; align-items: center; 
+            justify-content: center; overflow: hidden; position: relative; padding: 40px; box-sizing: border-box;
+        }
+        
+        #mainCanvas { 
+            display: block; max-width: 100%; max-height: 100%; aspect-ratio: 3 / 4; 
+            background: transparent; box-shadow: none !important; 
+            image-rendering: -webkit-optimize-contrast;
+        }
+        #upload { display: none; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="sidebar-content">
+        <div class="header"><h1>TYPE PLAY STUDIO</h1></div>
+        
+        <div class="ctrl">
+            <div class="file-input-wrapper">
+                <div class="file-input-container" onclick="document.getElementById('upload').click()" id="fileNameDisplay">上传图片 UPLOAD</div>
+                <div class="btn-clear" id="btnClear" onclick="clearImage()">✕</div>
+            </div>
+            <input type="file" id="upload" accept="image/*">
+        </div>
+
+        <div class="ctrl">
+            <label>1. 风格与源 <span class="sub-label">STYLE & SOURCE</span></label>
+            <div class="style-switch">
+                <div class="style-btn active" data-style="stable">金石拓印</div>
+                <div class="style-btn" data-style="rust">艺术拓印</div>
+            </div>
+        </div>
+
+        <div class="ctrl section-parameters">
+            <label>2. 核心参数 <span class="sub-label">PARAMETERS</span></label>
+            <label>处理强度 <span id="val-threshold" class="val-display">200</span></label>
+            <input type="range" id="threshold" min="0" max="255" value="200">
+            
+            <label>纹理缩放 <span id="val-unevenness" class="val-display">50</span></label>
+            <input type="range" id="unevenness" min="5" max="150" value="50">
+
+            <label>细节层次 <span id="val-vein" class="val-display">50</span></label>
+            <input type="range" id="vein" min="1" max="100" value="50">
+
+            <label>边缘锐利 <span id="val-grain" class="val-display">30</span></label>
+            <input type="range" id="grain" min="1" max="100" value="30">
+        </div>
+
+        <div class="ctrl section-colors">
+            <label>3. 色彩配置 <span class="sub-label">COLORS</span></label>
+            <div class="color-row">
+                <div class="color-unit"><label>主体墨色</label><input type="color" id="colorInk" value="#2a2a2a"></div>
+                <div class="color-unit"><label>主体底色</label><input type="color" id="colorPaper" value="#f2f0e9"></div>
+                <div class="color-unit"><label>画布背景</label><input type="color" id="colorCanvasBg" value="#ffffff"></div>
+            </div>
+            <button class="btn-toggle-paper" id="togglePaper">底色显示 OFF</button>
+        </div>
+
+        <div class="ctrl section-export">
+            <label>4. 导出与随机 <span class="sub-label">EXPORT & RANDOM</span></label>
+            <div class="export-group">
+                <button class="action-btn primary" id="btnJpg">JPG</button>
+                <button class="action-btn primary" id="btnPng">PNG</button>
+                <button class="action-btn secondary" onclick="randomizeColors()">随机色彩</button>
+                <button class="action-btn secondary" onclick="randomizeSeed()">随机纹理</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer-text">©2026 DESIGN BY TYPE PLAY STUDIO.</div>
+</div>
+
+<div class="canvas-area">
+    <canvas id="mainCanvas"></canvas>
+</div>
+
+<!-- ================= Web Worker 引擎 ================= -->
+<script id="worker-script" type="text/plain">
+    let cache = null;
+
+    function hash(n) { 
+        n = Math.sin(n) * 43758.5453123; 
+        return n - Math.floor(n); 
+    }
+
+    function noise(x, y) {
+        const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j;
+        const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy), n = i + j * 57;
+        const a = hash(n), b = hash(n + 1), c = hash(n + 57), d = hash(n + 58);
+        return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+    }
+
+    function fbm(x, y, octaves) {
+        let value = 0, amp = 0.5;
+        for (let i = 0; i < octaves; i++) { 
+            value += amp * noise(x, y); x *= 2.1; y *= 2.1; amp *= 0.5; 
+        }
+        return value;
+    }
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    self.onmessage = function(e) {
+        const { type, data } = e.data;
+
+        if (type === 'INIT_CACHE') {
+            const { width, height, pixels, seed } = data;
+            const size = width * height;
+            const gray = new Float32Array(size);
+            const mask = new Uint8Array(size); 
+            const grad = new Float32Array(size);
+
+            for(let i=0; i<size; i++) {
+                const idx = i * 4;
+                const r = pixels[idx], g = pixels[idx+1], b = pixels[idx+2], a = pixels[idx+3];
+                const luma = r*0.299 + g*0.587 + b*0.114;
+                gray[i] = luma;
+                mask[i] = (a > 20 && (r < 252 || g < 252 || b < 252)) ? 1 : 0;
+            }
+
+            for(let y=1; y<height-1; y++) {
+                for(let x=1; x<width-1; x++) {
+                    const idx = y * width + x;
+                    const dx = gray[idx+1] - gray[idx-1], dy = gray[idx+width] - gray[idx-width];
+                    grad[idx] = Math.sqrt(dx*dx + dy*dy);
+                }
+            }
+
+            const grid = 12;
+            const pressGrid = new Float32Array(grid * grid);
+            for(let i=0; i<grid*grid; i++) pressGrid[i] = hash(seed + i) * 2 - 1;
+
+            cache = { gray, grad, mask, pressGrid, seed, width, height };
+            self.postMessage({ type: 'CACHE_READY' });
+        }
+
+        if (type === 'RENDER') {
+            const { params } = data;
+            const { width, height } = cache;
+            const output = new Uint8ClampedArray(width * height * 4);
+            const sf = 1.0; 
+
+            if (params.style === 'stable') {
+                renderStable(output, params, cache, sf);
+            } else {
+                renderRust(output, params, cache, sf);
+            }
+
+            self.postMessage({ type: 'RENDER_RESULT', pixels: output }, [output.buffer]);
+        }
+    };
+
+    function renderStable(data, p, cache, sf) {
+        const { threshold, unevenness, vein, grain, ink, paper } = p;
+        const effectiveThreshold = threshold * 1.25;
+        const { width, height, gray, grad, mask, pressGrid } = cache;
+        const grid = 12;
+
+        for (let i = 0; i < width * height; i++) {
+            const idx = i * 4;
+            if (mask[i] === 0) {
+                data[idx+3] = 0; 
+                continue;
+            }
+            const x = i % width, y = (i / width) | 0;
+            const gx = (x / width) * (grid - 1), gy = (y / height) * (grid - 1);
+            const ix = Math.floor(gx), iy = Math.floor(gy), fx = gx - ix, fy = gy - iy;
+            const i0 = iy * grid + ix, i1 = i0 + 1, i2 = i0 + grid, i3 = i2 + 1;
+            
+            const pDist = (pressGrid[i0]*(1-fx)*(1-fy) + pressGrid[i1]*fx*(1-fy) + pressGrid[i2]*(1-fx)*fy + pressGrid[i3]*fx*fy) * unevenness;
+            const microNoise = (hash( i * 0.123 + cache.seed ) - 0.5) * 2 * grain;
+            
+            const isInk = (gray[i] + pDist + microNoise + grad[i] * sf * vein * 0.2) < effectiveThreshold;
+            const color = isInk ? ink : paper;
+
+            if (!isInk && p.paperHidden) {
+                data[idx+3] = 0;
+            } else {
+                data[idx]=color.r; data[idx+1]=color.g; data[idx+2]=color.b; data[idx+3]=255;
+            }
+        }
+    }
+
+    function renderRust(data, p, cache, sf) {
+        const { threshold, unevenness, vein, grain, ink, paper, seed, paperHidden } = p;
+        const { width, height, gray, mask } = cache;
+        const rustDark = { r: ink.r * 0.5, g: ink.g * 0.5, b: ink.b * 0.5 };
+        const rustThresh = lerp(0.05, 0.78, threshold / 255);
+        const texScale = (unevenness / 100) * 3.0;
+        const octaves = Math.max(1, Math.floor(vein / 12));
+        const sharpness = grain / 150;
+
+        for (let i = 0; i < width * height; i++) {
+            const idx = i * 4;
+            if (mask[i] === 0) {
+                data[idx+3] = 0;
+                continue;
+            }
+            const x = i % width, y = (i / width) | 0;
+            const nx = (x/width)*10*texScale + seed/100, ny = (y/height)*10*texScale + seed/100;
+            let nVal = (fbm(nx, ny, octaves) * 0.75) + (gray[i]/255)*0.25;
+            const grainVal = (hash(i * 0.123 + seed) - 0.5) * (sharpness*0.6 + (threshold/255)*0.2);
+            
+            let t = Math.max(0, Math.min(1, (nVal + grainVal - (rustThresh - sharpness*0.5)) / (sharpness || 0.01)));
+            
+            if (t < 0.45) {
+                const rT = t / 0.45;
+                data[idx]=lerp(rustDark.r, ink.r, rT); data[idx+1]=lerp(rustDark.g, ink.g, rT); data[idx+2]=lerp(rustDark.b, ink.b, rT); data[idx+3]=255;
+            } else {
+                if (paperHidden) {
+                    data[idx+3] = 0;
+                } else {
+                    const pT = (t-0.45)/0.55;
+                    data[idx]=lerp(ink.r, paper.r, pT); data[idx+1]=lerp(ink.g, paper.g, pT); data[idx+2]=lerp(ink.b, paper.b, pT); data[idx+3]=255;
+                }
+            }
+        }
+    }
+</script>
+
+<script>
+const CONFIG = { 
+    PREVIEW_W: 800, PREVIEW_H: 1067, 
+    EXPORT_W: 3508, EXPORT_H: 4677, 
+    SCALE: 0.85 
+};
+
+const STYLE_DEFAULTS = {
+    stable: { threshold: 200, unevenness: 50, vein: 50, grain: 30 },
+    rust: { threshold: 180, unevenness: 20, vein: 75, grain: 30 }
+};
+
+let worker, originalBitmap = null, isRendering = false, needsRender = false, currentStyle = 'stable', seed = 500;
+let paperHidden = true; 
+
+const mainCanvas = document.getElementById('mainCanvas');
+mainCanvas.width = CONFIG.PREVIEW_W; mainCanvas.height = CONFIG.PREVIEW_H;
+const mainCtx = mainCanvas.getContext('2d', { alpha: true });
+
+// 离屏画布：专门存放 Worker 渲染出的透明纹理，用于 PNG 导出和合成
+const offscreenCanvas = document.createElement('canvas');
+offscreenCanvas.width = CONFIG.PREVIEW_W; offscreenCanvas.height = CONFIG.PREVIEW_H;
+const offscreenCtx = offscreenCanvas.getContext('2d');
+
+function initWorker() {
+    const blob = new Blob([document.getElementById('worker-script').textContent], { type: 'text/javascript' });
+    worker = new Worker(URL.createObjectURL(blob));
+    worker.onmessage = (e) => {
+        const { type, pixels } = e.data;
+        if (type === 'CACHE_READY') triggerRender();
+        if (type === 'RENDER_RESULT') {
+            // 更新离屏纹理缓存
+            offscreenCtx.clearRect(0, 0, CONFIG.PREVIEW_W, CONFIG.PREVIEW_H);
+            offscreenCtx.putImageData(new ImageData(pixels, CONFIG.PREVIEW_W, CONFIG.PREVIEW_H), 0, 0);
+            
+            // 触发主画布合成
+            renderComposite();
+            
+            isRendering = false;
+            if (needsRender) triggerRender();
+        }
+    };
+}
+
+// 核心函数：合成背景与纹理（实现右键复制100%一致，且背景色即时同步）
+function renderComposite() {
+    // 1. 先铺背景色
+    const bgColor = document.getElementById('colorCanvasBg').value;
+    mainCtx.fillStyle = bgColor;
+    mainCtx.fillRect(0, 0, CONFIG.PREVIEW_W, CONFIG.PREVIEW_H);
+    
+    // 2. 叠加上层透明纹理
+    mainCtx.drawImage(offscreenCanvas, 0, 0);
+}
+
+document.getElementById('upload').onchange = async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    document.getElementById('fileNameDisplay').textContent = file.name;
+    document.getElementById('btnClear').style.display = 'block';
+    if (originalBitmap) originalBitmap.close();
+    originalBitmap = await createImageBitmap(file);
+    updateWorkerCache();
+};
+
+function updateWorkerCache() {
+    if(!originalBitmap) return;
+    const w = CONFIG.PREVIEW_W, h = CONFIG.PREVIEW_H;
+    const helperCanvas = document.createElement('canvas');
+    helperCanvas.width = w; helperCanvas.height = h;
+    const ctx = helperCanvas.getContext('2d');
+    
+    const sc = Math.min(w/originalBitmap.width, h/originalBitmap.height) * CONFIG.SCALE;
+    const dx = (w - originalBitmap.width*sc)/2, dy = (h - originalBitmap.height*sc)/2;
+    ctx.clearRect(0,0,w,h);
+    ctx.drawImage(originalBitmap, dx, dy, originalBitmap.width*sc, originalBitmap.height*sc);
+    const imageData = ctx.getImageData(0,0,w,h);
+    
+    worker.postMessage({ 
+        type: 'INIT_CACHE', 
+        data: { width: w, height: h, pixels: imageData.data, seed } 
+    }, [imageData.data.buffer]);
+}
+
+function triggerRender() {
+    if (!originalBitmap) {
+        renderComposite(); // 即使没图片也同步背景色
+        return;
+    }
+    if (isRendering) { needsRender = true; return; }
+    isRendering = true; needsRender = false;
+
+    const params = {
+        threshold: parseInt(document.getElementById('threshold').value),
+        unevenness: parseInt(document.getElementById('unevenness').value),
+        vein: parseInt(document.getElementById('vein').value),
+        grain: parseInt(document.getElementById('grain').value),
+        style: currentStyle,
+        ink: hexToRgb(document.getElementById('colorInk').value),
+        paper: hexToRgb(document.getElementById('colorPaper').value),
+        seed: seed,
+        paperHidden
+    };
+    worker.postMessage({ type: 'RENDER', data: { params }});
+}
+
+function hexToRgb(hex) {
+    const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return r ? { r: parseInt(r[1], 16), g: parseInt(r[2], 16), b: parseInt(r[3], 16) } : {r:0,g:0,b:0};
+}
+
+function exportImage(format) {
+    if (!originalBitmap) return;
+    const exportCanvas = document.createElement('canvas');
+    exportCanvas.width = CONFIG.EXPORT_W;
+    exportCanvas.height = CONFIG.EXPORT_H;
+    const ctx = exportCanvas.getContext('2d');
+
+    // 如果是 JPG 则绘制背景，如果是 PNG 则不绘制（保持透明）
+    if (format === 'jpg') {
+        const bgColor = document.getElementById('colorCanvasBg').value;
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, CONFIG.EXPORT_W, CONFIG.EXPORT_H);
+    }
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    // 从离屏的透明纹理中导出，保证 PNG 透明
+    ctx.drawImage(offscreenCanvas, 0, 0, CONFIG.EXPORT_W, CONFIG.EXPORT_H);
+
+    const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
+    exportCanvas.toBlob((blob) => {
+        const link = document.createElement('a');
+        link.download = `TYPE_PLAY_STUDIO_${Date.now()}.${format}`;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }, mimeType, 1.0);
+}
+
+// 事件绑定
+['threshold', 'unevenness', 'vein', 'grain'].forEach(id => {
+    document.getElementById(id).oninput = function() {
+        document.getElementById('val-' + id).textContent = this.value;
+        triggerRender();
+    };
+});
+
+// 色彩即时同步：ink/paper 涉及 worker 运算，canvasBg 涉及实时合成
+['colorInk', 'colorPaper'].forEach(id => {
+    document.getElementById(id).oninput = () => triggerRender();
+});
+
+// 画布背景色实现真正的“即时同步”：不经过 Worker，直接重绘合成
+document.getElementById('colorCanvasBg').oninput = function() {
+    renderComposite();
+};
+
+document.getElementById('togglePaper').onclick = function() {
+    paperHidden = !paperHidden;
+    this.textContent = paperHidden ? "底色显示 OFF" : "底色显示 ON";
+    this.classList.toggle('active', !paperHidden);
+    triggerRender();
+};
+
+document.querySelectorAll('.style-btn').forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentStyle = btn.dataset.style;
+        const def = STYLE_DEFAULTS[currentStyle];
+        ['threshold', 'unevenness', 'vein', 'grain'].forEach(key => {
+            document.getElementById(key).value = def[key];
+            document.getElementById('val-' + key).textContent = def[key];
+        });
+        triggerRender();
+    };
+});
+
+document.getElementById('btnJpg').onclick = () => exportImage('jpg');
+document.getElementById('btnPng').onclick = () => exportImage('png');
+
+function randomizeColors() {
+    const r = () => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+    document.getElementById('colorInk').value = r();
+    document.getElementById('colorPaper').value = r();
+    document.getElementById('colorCanvasBg').value = r();
+    triggerRender();
+}
+
+function randomizeSeed() {
+    seed = Math.floor(Math.random() * 1000);
+    if (originalBitmap) updateWorkerCache();
+}
+
+function clearImage() {
+    originalBitmap = null; document.getElementById('upload').value = '';
+    document.getElementById('fileNameDisplay').textContent = '上传图片 UPLOAD';
+    document.getElementById('btnClear').style.display = 'none';
+    offscreenCtx.clearRect(0, 0, CONFIG.PREVIEW_W, CONFIG.PREVIEW_H);
+    renderComposite();
+}
+
+initWorker();
+renderComposite();
+</script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
